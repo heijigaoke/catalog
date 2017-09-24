@@ -1,0 +1,119 @@
+version: '2'
+
+services:
+
+  os-agg-p:
+    
+    image: omnibusgd:latest
+    
+    hostname: $agg_name.aggregationp
+
+    environment:
+      
+      - os=$agg_name.aggregationp
+
+    volumes:
+
+      - /opt/omnibus/osp/$agg_name:/opt/IBM/tivoli/netcool/omnibus/db
+
+      - /etc/localtime:/etc/localtime:ro
+    
+    expose:
+    
+      - "4700"  
+     
+      
+  os-agg-b:
+    image: omnibusgd:latest
+    
+    hostname: $agg_name.aggregationb
+    
+    
+    environment:
+      
+      - os=$agg_name.aggregationb
+    
+    volumes:
+
+      - /opt/omnibus/osb/$agg_name:/opt/IBM/tivoli/netcool/omnibus/db
+
+      - /etc/localtime:/etc/localtime:ro
+      
+    
+    expose:
+    
+      - "4700"  
+    
+    depends_on:
+      - os-agg-p
+    
+    command: /opt/start/wait-for-it.sh os-agg-p:4700 -t 30 -- /opt/start/start.sh
+         
+    links:
+      - os-agg-p:$agg_name.aggregationp
+      
+  os-coll:
+
+    image: omnibusgd:latest
+    
+    environment:
+      
+      - os=$coll_name.colletion
+     
+      - aggname=$agg_name
+    
+    volumes:
+
+      - /opt/IBM/tivoli/netcool/omnibus/db
+
+      - /etc/localtime:/etc/localtime:ro
+
+    ports:
+      - 4600:4600  
+    
+    depends_on:
+      - os-agg-p
+      
+      - os-agg-b     
+    
+    links:
+      - os-agg-p:$agg_name.aggregationp
+      
+      - os-agg-b:$agg_name.aggregationb
+           
+  os-disp:
+      
+    image: omnibusgd:latest
+    
+    environment:
+      
+      - os=$disp_name.display
+    
+      - aggname=$agg_name
+    
+    volumes:
+
+      - /opt/IBM/tivoli/netcool/omnibus/db
+
+      - /etc/localtime:/etc/localtime:ro
+      
+    
+    ports:
+      - 4800:4800  
+    
+    depends_on:
+      - os-agg-p
+      
+      - os-agg-b
+      
+    links:
+      - os-agg-p:$agg_name.aggregationp
+      
+      - os-agg-b:$agg_name.aggregationb
+
+volumes:
+
+  os-storage:
+
+    driver: local
+

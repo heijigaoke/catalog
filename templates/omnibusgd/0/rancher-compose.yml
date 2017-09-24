@@ -1,0 +1,33 @@
+.catalog:
+  name: OMNIBUS 3C
+  version: 4.1.1-rancher1
+  questions:
+     - variable: "display_num"
+       label: "Display OS Num"
+       type: "int"
+       required: true
+       default: "1"
+     - variable: "collect_num"
+       label: "Collect OS Num"
+       type: "int"
+       required: true
+       default: "1"
+     - variable: "agg_name"
+       label: "AGG OS Instance name"
+       type: "string"
+       required: true
+       default: "AGG"
+     - variable: "coll_name"
+       label: "COLL OS Instance name"
+       type: "string"
+       required: true
+       default: "COLL"
+     - variable: "disp_name"
+       label: "DISP OS Instance name"
+       type: "string"
+       required: true
+       default: "DISP"
+os-coll:
+     scale: $collect_num
+os-disp:
+     scale: $display_num

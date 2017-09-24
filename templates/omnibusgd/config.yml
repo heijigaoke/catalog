@@ -1,0 +1,4 @@
+name: "omnibus 3c"
+description: "omnibus"
+version: "4.6.3-rancher1"
+category: Monitoring 
